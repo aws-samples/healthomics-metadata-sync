@@ -112,7 +112,7 @@ The store creates an entry per read set with the following info:
 }
 ```
 
-Since these are dynamo records, searching by the properties available can be done using Amazon DynamoDB's APIs. 
+Since these are Amazon DynamoDB records, searching by the properties available can be done using Amazon DynamoDB's APIs. 
 
 ## Backfill
 
