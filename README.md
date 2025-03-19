@@ -1,16 +1,16 @@
 # Metadata sync for AWS HealthOmics Sequence Store
 
-This is a simple CDK app demonstrating a lambda driven, dynamoDB stored metadata sync for AWS HealthOmics.
+This is a simple CDK app demonstrating a Amazon Lambda driven, Amazon DynamoDB stored metadata sync for AWS HealthOmics.
 
 ## Prerequisites
 
 * [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install) and all associated dependencies (like NodeJS)
 
 ## What's deployed
-1. Lambda Function - An Amazon Lambda function is created that that takes a read set event and processes it into a dynamo update or insert
-2. Event Bridge Rule - A new rule is added to Amazon EventBridge that triggers the AWS Lambda function that's created for read set status updates
-3. (Optional) DynamoDB table - If a table name is not specified, a new Amazon DynamoDB table is created with the name `healthomics_set_metadata`
-4. (Optional) SQS FIFO Queue name - If a queue name is not specified, new Amazon SQS FIFO queue is created with the name `healthomics_set_queue`
+1. Amazon Lambda Function - An Amazon Lambda function is created that that takes a read set event and processes it into a Amazon DynamoDB update or insert
+2. Amazon EventBridge Rule - A new rule is added to Amazon EventBridge that triggers the Amazon Lambda function that's created for read set status updates
+3. (Optional) Amazon DynamoDB table - If a table name is not specified, a new Amazon DynamoDB table is created with the name `healthomics_set_metadata`
+4. (Optional) Amazon SQS FIFO Queue name - If a queue name is not specified, new Amazon SQS FIFO queue is created with the name `healthomics_set_queue`
 
 ## Configuration
 
@@ -18,8 +18,8 @@ Edit the `cdk.json` file at the root of this project (where this README file is)
 
 | attribute | type | required | description |
 | :-- | :-- | :-- | :-- |
-| `dynamoTableName` | string | yes | The table name of the dynamo table to write to.  This table should have a primary key of `set_arn` that corresponds to the arn of the read set. If this is not provided, the table will be created with the name `healthomics_set_metadata` |
-| `SQSQueueName` | string | yes | The name of the SQS FIFO queue to store event messages. If this is not provided, the queue will be created with the name `healthomics_set_queue` |
+| `dynamoTableName` | string | yes | The table name of the Amazon DynamoDB table to write to.  This table should have a primary key of `set_arn` that corresponds to the arn of the read set. If this is not provided, the table will be created with the name `healthomics_set_metadata` |
+| `SQSQueueName` | string | yes | The name of the Amazon SQS FIFO queue to store event messages. If this is not provided, the queue will be created with the name `healthomics_set_queue` |
 
 
 An example configuration looks like:
@@ -112,18 +112,18 @@ The store creates an entry per read set with the following info:
 }
 ```
 
-Since these are dynamo records, searching by the properties available can be done using Dynamo's APIs. 
+Since these are dynamo records, searching by the properties available can be done using Amazon DynamoDB's APIs. 
 
 ## Backfill
 
-A backfill script is also attached in the repo to fill in records for an existing store.  For large stores this can take a long time and we encourage you to work with the HealthOmics team to get the proper TPS limits set on the `GetReadSetMetadata` API.  The backfill will not populate the file information for Archived read sets as it is unavailable. When the read set is activated again, it will be populated. The backfill script will sync all read sets in the store and will overwrite any already in the store. The backfill script is available at `backfill_util/backfill_script.py`
+A backfill script is also attached in the repo to fill in records for an existing store.  For large stores this can take a long time and we encourage you to work with the AWS HealthOmics team to get the proper TPS limits set on the `GetReadSetMetadata` API.  The backfill will not populate the file information for Archived read sets as it is unavailable. When the read set is activated again, it will be populated. The backfill script will sync all read sets in the store and will overwrite any already in the store. The backfill script is available at `backfill_util/backfill_script.py`
 
 The backfill has the following parameters 
 
 | Parameter           | type   | required | description                                                  |
 | :------------------ | :----- | :------- | :----------------------------------------------------------- |
 | `-s --seq-store-id` | string | yes      | The ID of the sequence store to sync.                        |
-| `-t --table`        | string | yes      | The table name of the DynamoDB table to put the data to.     |
+| `-t --table`        | string | yes      | The table name of the Amazon DynamoDB table to put the data to.     |
 | `-r --region`       | string | yes      | The region of the store and table. This must be the same.    |
 | `--profile`         | String | no.      | (optional) The profile name for boto3 to use if you do not want it to use the default profile configured. |
 
@@ -140,9 +140,9 @@ As this processes, the system will print out every batch of processed read sets.
 ![](./assets/aho_metadata.png)
 
 1. AWS HealthOmics automatically creates Read Set Status Update events in Amazon EventBridge.  
-2. The Eventbridge events are stored in an Amazon SQS FIFO queue 
-3. The SQS queue triggers the AWS Lambda function. 
-4. The Lambda function determines if the Amazon DynamoDB table entry needs to be written, updated or deleted.  The read set status that triggered the event determines which of the following happens:
+2. The Amazon Eventbridge events are stored in an Amazon SQS FIFO queue 
+3. The Amazon SQS queue triggers the AWS Lambda function. 
+4. The Amazon Lambda function determines if the Amazon DynamoDB table entry needs to be written, updated or deleted.  The read set status that triggered the event determines which of the following happens:
    1. ACTIVE: The read set metadata, read set tag information, and sequence store metadata is queried and the read set entry is refreshed. 
    2. ACTIVATING, ARCHIVED, DELETING: The status for the read set entry is updated based on read set ARN
    3. DELETED: The read set entry is deleted
@@ -162,7 +162,7 @@ To remove the deployed resources run the following at the root of this project (
 cdk destroy
 ```
 
-No data in S3 or in Dynamo is deleted during this operation. In addition, if a table was created in Dynamo, it remains. 
+No data in Amazon S3 or in Amazon DynamoDB is deleted during this operation. In addition, if a table was created in Amazon DynamoDB, it remains. 
 
 ## Security
 
