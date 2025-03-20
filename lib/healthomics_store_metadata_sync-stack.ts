@@ -136,7 +136,7 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
 	});
 
     ruleTriggerMetadataWrite.addTarget(new targets.SqsQueue(metadataQueue, {
- 	messageBody: events.RuleTargetInput.fromEventPath('\$.detail'),
+ 	message: events.RuleTargetInput.fromEventPath('\$.detail'),
 	messageGroupId: 'healthomics-metadata-sync',
 	queueUrl: metadataQueue.queueUrl
      }));
