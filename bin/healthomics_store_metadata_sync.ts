@@ -11,5 +11,6 @@ console.log("SQSQeueuName: " + app.node.tryGetContext('SQSQueueName'));
 
 new HealthomicsStoreMetadataSyncStack(app, 'HealthomicsStoreMetadataSyncStack', {
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-  dynamoTableName: app.node.tryGetContext('dynamoTableName'); SQSQueueName: app.node.tryGetContext('SQSQueueName')
+  dynamoTableName: app.node.tryGetContext('dynamoTableName'),
+  SQSQueueName: app.node.tryGetContext('SQSQueueName')
 });
