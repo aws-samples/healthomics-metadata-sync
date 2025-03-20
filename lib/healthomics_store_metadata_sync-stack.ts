@@ -48,9 +48,13 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
     let metadataQueue: sqs.IQueue;
 
     if (props.SQSQueueName) {
+      const accountId = cdk.Stack.of(this).account;
+      const region = cdk.Stack.of(this).region;
+      const queueArn = `arn:aws:sqs:\${region}:\${accountId}:\${props.SQSQueueName}`;
+     
       const metadataQueue = sqs.Queue.fromQueueAttributes(this, 'metadataQueue', {
         queueName: props.SQSQueueName,
-        fifo: true
+	queueArn: queueArn       
       });
       SQSQueueName = props.SQSQueueName;
       SQSQueueArn = metadataQueue.queueArn;
