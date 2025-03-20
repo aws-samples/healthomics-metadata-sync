@@ -45,17 +45,18 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
     let SQSQueueName: string;
     let SQSQueueArn: string;
     let SQSQueueUrl: string;
+    let metadataQueue: sqs.IQueue;
 
     if (props.SQSQueueName) {
-      const queue = sqs.Queue.fromQueueAttributes(this, 'metadataQueue', {
-        SQSQueueName: props.SQSQueueName,
+      const metadataQueue = sqs.Queue.fromQueueAttributes(this, 'metadataQueue', {
+        queueName: props.SQSQueueName,
         fifo: true
       });
       SQSQueueName = props.SQSQueueName;
-      SQSQueueArn = queue.queueArn;
-      SQSQueueUrl = queue.queueUrl;
+      SQSQueueArn = metadataQueue.queueArn;
+      SQSQueueUrl = metadataQueue.queueUrl;
     } else {
-      const queue = new sqs.Queue(this, 'metadataQueue', {
+      const metadataQueue = new sqs.Queue(this, 'metadataQueue', {
         queueName: 'healthomics_set_queue.fifo',
         fifo: true,
         contentBasedDeduplication: true,
@@ -63,9 +64,9 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
         retentionPeriod: cdk.Duration.days(14),
 	visibilityTimeout: cdk.Duration.minutes(15)
       });
-      SQSQueueName = queue.queueName;
-      SQSQueueArn = queue.queueArn;
-      SQSQueueUrl = queue.queueUrl;
+      SQSQueueName = metadataQueue.queueName;
+      SQSQueueArn = metadataQueue.queueArn;
+      SQSQueueUrl = metadataQueue.queueUrl;
     }
 
 
@@ -125,12 +126,12 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
       }
     });
 
-    const eventSource = new lambda_event_sources.SqsEventSource(queue, {
+    const eventSource = new lambda_event_sources.SqsEventSource(metadataQueue, {
 	  batchSize: 1,
 	  enabled: true
 	});
 
-    ruleTriggerMetadataWrite.addTarget(new targets.SqsQueue(queue));
+    ruleTriggerMetadataWrite.addTarget(new targets.SqsQueue(metadataQueue));
     
     fnMetadataWriter.addEventSource(eventSource);
 
