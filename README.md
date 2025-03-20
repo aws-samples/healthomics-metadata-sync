@@ -18,8 +18,8 @@ Edit the `cdk.json` file at the root of this project (where this README file is)
 
 | attribute | type | required | description |
 | :-- | :-- | :-- | :-- |
-| `dynamoTableName` | string | yes | The table name of the Amazon DynamoDB table to write to.  This table should have a primary key of `set_arn` that corresponds to the arn of the read set. If this is not provided, the table will be created with the name `healthomics_set_metadata` |
-| `SQSQueueName` | string | yes | The name of the Amazon SQS FIFO queue to store event messages. If this is not provided, the queue will be created with the name `healthomics_set_queue` |
+| `dynamoTableName` | string | no | The table name of the Amazon DynamoDB table to write to.  This table should have a primary key of `set_arn` that corresponds to the arn of the read set. If this is not provided, the table will be created with the name `healthomics_set_metadata` |
+| `SQSQueueName` | string | no | The name of the Amazon SQS FIFO queue to store event messages. If this is not provided, the queue will be created with the name `healthomics_set_queue` |
 
 
 An example configuration looks like:
