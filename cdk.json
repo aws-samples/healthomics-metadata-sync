@@ -17,8 +17,6 @@
     ]
   },
   "context": {
-    "dynamoTableName": "healthomics_set_metadata",
-    "SQSQueueName": "healthomics_set_queue.fifo",
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [
