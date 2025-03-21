@@ -10,7 +10,7 @@ This is a simple CDK app demonstrating a Amazon Lambda driven, Amazon DynamoDB s
 1. Amazon Lambda Function - An Amazon Lambda function is created that that takes a read set event and processes it into a Amazon DynamoDB update or insert
 2. Amazon EventBridge Rule - A new rule is added to Amazon EventBridge that triggers the Amazon Lambda function that's created for read set status updates
 3. (Optional) Amazon DynamoDB table - If a table name is not specified, a new Amazon DynamoDB table is created with the name `healthomics_set_metadata`
-4. (Optional) Amazon SQS FIFO Queue name - If a queue name is not specified, new Amazon SQS FIFO queue is created with the name `healthomics_set_queue`
+4. (Optional) Amazon SQS FIFO Queue name - If a queue name is not specified, new Amazon SQS FIFO queue is created with the name `healthomics_set_queue.fifo`
 
 ## Configuration
 
