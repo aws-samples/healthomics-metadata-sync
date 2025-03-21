@@ -139,11 +139,9 @@ def handler(event, context):
         omics_client = boto3.client('omics', config=config)
 
         for record in event['Records']:
-           # Parse the message body which contains the EventBridge event
-           payload = json.loads(record['body'])
+           # Parse the message body which contains the EventBridge event details
+           detail = json.loads(record['body'])
             
-           # Extract EventBridge detail
-           detail = payload.get('detail')
            if detail:
                read_set_id = detail.get('id')
                store_id = detail.get('sequenceStoreId')
