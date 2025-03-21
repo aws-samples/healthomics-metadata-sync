@@ -34,8 +34,7 @@ export class HealthomicsStoreMetadataSyncStack extends cdk.Stack {
     } else {
       const dynamoTable = new dynamodb.Table(this, 'metadataTable', {
         tableName: 'healthomics_set_metadata',
-        partitionKey: {name: 'set_arn', type: dynamodb.AttributeType.STRING},
-        sortKey: {name: 'set_status', type:dynamodb.AttributeType.STRING}
+        partitionKey: {name: 'set_arn', type: dynamodb.AttributeType.STRING}
       });
 
       dynamoTableName = dynamoTable.tableName
