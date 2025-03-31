@@ -53,7 +53,7 @@ def backfill_set(read_set, store_info, omics_client, ddb_table, wait):
     read_set_item['store'] = store_info
     
     #print(read_set_item)
-    ddb_table.put_item(Item=read_set_item)
+    put_response = ddb_table.put_item(Item=read_set_item)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     # default parameters
     table_name = args.table
     store_id = args.seq_store_id
-    max_results = 100
+    max_results = 10
     wait = 0.025 # prevent TPS hit
     processed = 0
 
@@ -91,6 +91,7 @@ if __name__ == "__main__":
     aws_session = boto3.session.Session(profile_name=args.profile)
     ddb_resource = aws_session.resource('dynamodb', region_name=args.region, config=config)
     table_resource = ddb_resource.Table(table_name)
+    table_resource.load()
     omics_client = aws_session.client('omics', region_name=args.region, config=config)
 
     
@@ -109,19 +110,25 @@ if __name__ == "__main__":
             'store_uri': store_metadata_response.get('s3Access').get('s3Uri')
         }
 
-        while(next_token):
+        while(next_token or set_list):
+            print(f'number of read sets writing: {len(set_list)}')
             # get read set info
             for rs in set_list:
                 backfill_set(rs, store_info, omics_client, table_resource, wait)
             
             # print progress
             processed += len(set_list)
-            print(f'completed {processed} read sets')
 
             # get next item
             next_token = set_list_raw.get('nextToken')
             if not next_token:
+                print('end')
                 break
             
             set_list_raw = omics_client.list_read_sets(sequenceStoreId=store_id, nextToken=next_token, maxResults=max_results)
             set_list = set_list_raw.get('readSets')
+
+        print(f'completed {processed} read sets')
+        
+    else:
+        print('no read sets to sync')
