@@ -80,7 +80,7 @@ if __name__ == "__main__":
     # default parameters
     table_name = args.table
     store_id = args.seq_store_id
-    max_results = 10
+    max_results = 100
     wait = 0.025 # prevent TPS hit
     processed = 0
 
